@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GlucoScan</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+
+
+<body>
+
+
+<div style="position: relative;overflow:hidden;width: 1px; height:1px; border: 2px white solid">
+    <video style="position:absolute;z-index: -9999;" autoplay playsinline muted></video>
+</div>
+{% include "ui.html" %}
+
+<script>
+    startSocket();
+    runRecognitionFromCamera();
+</script>
+</body>
+</html>

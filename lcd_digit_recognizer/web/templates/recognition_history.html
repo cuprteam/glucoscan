@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recognition History - GlucoScan</title>
+</head>
+<body>
+<h1>Recognition History</h1>
+
+{% for id in ids %}
+<a href="/show_recognition/{{id}}">{{id}}</a>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History - GlucoScan</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+
+</head>
+<body>
+<center>
+    <div id="panel" class="panel">
+        <button id="share_history_button" class="wide_button" onclick="clipboardHistoryExport()">Share history</button>
+
+        <div id="history_output"></div>
+    </div>
+
+    <div id="history_saved" style="visibility: hidden" aria-live="polite">
+        <center>
+            Copied to clipboard
+        </center>
+    </div>
+
+</center>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="/static/recognition_manager.js"></script>
+<script src="static/core.js"></script>
+<script src="static/show_history.js"></script>
+<script>
+    renderHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exported History - GlucoScan</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+
+</head>
+<body>
+<center>
+    <div id="panel" class="panel">
+        <div id="history_output"></div>
+    </div>
+</center>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+<script src="/static/recognition_manager.js"></script>
+<script src="static/core.js"></script>
+<script src="static/show_history.js"></script>
+<script>
+    renderValues(historyOutputEl, decodeUrlValues());
+</script>
+</body>
+</html>

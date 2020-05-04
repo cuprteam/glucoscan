@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Camera Debug - GlucoScan</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+
+
+<body>
+<h1>
+    Version with debug outputs
+</h1>
+
+<div id="recognition_counter"></div>
+
+<video autoplay playsinline> </video>
+<img id="annotated_image" style="height:200px"/>
+<span id="recognition_history"></span>
+{% include "ui.html" %}
+
+<script>
+    startSocket();
+    runRecognitionFromCamera();
+</script>
+</body>
+</html>

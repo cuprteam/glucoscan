@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History Filler - GlucoScan</title>
+</head>
+<body>
+
+<script src="static/show_history.js"></script>
+
+<h2>History</h2>
+<div id="current_history">
+
+</div>
+
+<input id="history_value" placeholder="4.5;5.6" type="text"/>
+<button onclick="saveHistory()">Save to history</button>
+<button onclick="clearHistory()">Clear history</button>
+
+<script>
+    function saveHistory() {
+        let el = document.getElementById("history_value");
+        let historyStr = el.value;
+        el.value = "";
+
+        for (let value of historyStr.split(";")) {
+            saveHistoryValue(value);
+        }
+
+        showHistory();
+    }
+
+    function clearHistory() {
+        localStorage.removeItem(historyStorageKey);
+    }
+
+    function showHistory() {
+        document.getElementById('current_history').innerText = localStorage.getItem(historyStorageKey);
+    }
+
+    showHistory();
+
+</script>
+
+</html>

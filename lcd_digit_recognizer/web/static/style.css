@@ -1,0 +1,164 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f9f9f9;
+    font-size: 30px;
+    font-weight: bold;
+    padding-top: 2vh;
+}
+
+#recognition_counter{
+    font-size: 20px;
+}
+
+#debug_output{
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.history_arrow{
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    position: relative;
+    top: 1px;
+}
+
+.panel {
+    width: 80vw;
+    height: 90vh;
+    display: block;
+    max-width: 768px;
+    margin-bottom: 5vh;
+}
+
+.help {
+    display: block;
+    height: 3%;
+    padding-bottom: 2vh;
+    padding-left: 70px;
+    background-image: url("favicon.png");
+    background-repeat: no-repeat;
+    background-position: 20px 0px;
+    background-size: 32px 32px;
+    color: black;
+    text-decoration: none;
+    text-align: left;
+    margin-bottom: 2vh;
+}
+
+.canvas_wrapper {
+    width: 100%;
+    height: 30vh;
+    position: relative;
+    overflow: hidden;
+    background-color: silver;
+    border-radius: 2vh;
+    margin-bottom: 2vh;
+    padding-top: 3vh;
+}
+
+#canvas1 {
+    position: absolute;
+    display: none;
+}
+
+#history_saved {
+    position: fixed;
+    bottom: 2vh;
+    width: 100%;
+}
+
+#img1 {
+    position: absolute;
+    top: -9999px;
+    bottom: -9999px;
+    left: -9999px;
+    right: -9999px;
+    margin: auto;
+    height: 30vh;
+    background-color: gray;
+}
+
+.recognition_output {
+    height: 10vh;
+    line-height: 10vh;
+    text-align: center;
+    border-radius: 2vh;
+    border: 1vh solid #dddddd;
+    background-color: silver;
+    margin-bottom: 2vh;
+    vertical-align: middle;
+    color: #444444;
+}
+
+.display_displayed {
+    border-color: #ffded6;
+    background-color: lightcoral;
+}
+
+.display_not_displayed {
+    border-color: #ffded6;
+    background-color: lightcoral;
+}
+
+.display_undefined {
+    border-color: #ffded6;
+    background-color: lightcoral;
+}
+
+.contains_recognized_value {
+    border-color: #e1ffcc;
+    background-color: lightgreen;
+}
+
+.wide_button {
+    width: 100%;
+    height: 13vh;
+    display: block;
+    text-decoration: none;
+    border-radius: 2vh;
+    margin-bottom: 2vh;
+    font-size: 30px;
+    font-weight: bold;
+    border: 1vh solid #fbda94;
+    color: #444444;
+    background-color: #faa657;
+}
+
+.help_description {
+    font-weight: normal;
+    text-align: left;
+    font-size: 15px;
+    color: gray;
+}
+
+.history_output {
+    width: 100%;
+}
+
+.history_item {
+    line-height: 8vh;
+    width: 100%;
+    height: 8vh;
+    border-radius: 2vh;
+    margin-bottom: 2vh;
+    background-color: #fbda94;
+    clear: both;
+    font-size: 25px;
+}
+
+.history_date {
+    display: block;
+    float: left;
+    width: 50%;
+    margin-left: 5vw;
+    text-align: left;
+}
+
+.history_value {
+    display: block;
+    float: right;
+    width: 20%;
+    margin-right: 5vw;
+    text-align: right;
+}

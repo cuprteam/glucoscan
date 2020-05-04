@@ -1,0 +1,62 @@
+<!-- HTML -->
+<center>
+    <canvas id="canvas1"></canvas>
+
+    <div id="panel" class="panel">
+        <div class="canvas_wrapper">
+            <img id="img1" aria-hidden="true">
+        </div>
+        <div id="recognition_output" class="recognition_output display_indicator display_undefined" aria-live="polite">
+        </div>
+
+
+        <div class="menu">
+            <button onclick="try_save_value()" class="wide_button">
+                Save
+            </button>
+            <a href="/history" style="text-decoration: none;overflow: hidden">
+                <button class="wide_button">
+                History
+                </button>
+            </a>
+        </div>
+
+        <div class="help_description">
+            <p name="help">
+                Point the phone at the glucometer. Hold both in vertical position about 20 to 30 cm apart.
+            </p>
+        </div>
+    </div>
+</center>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script src="static/show_history.js"></script>
+<script src="/static/recognition_manager.js"></script>
+<script src="/static/core.js"></script>
+<script src="/static/camera.js"></script>
+
+<script>
+    function try_save_value() {
+        let valueSource = $("#recognition_output");
+        if (!RECOGNITION_MANAGER.hasCurrentValue()) {
+            RECOGNITION_MANAGER.showMessage("No value recognized yet", 3);
+            return;
+        }
+
+        saveHistoryValue(RECOGNITION_MANAGER.getCurrentValue());
+        RECOGNITION_MANAGER.clearCurrentValue();
+        RECOGNITION_MANAGER.showMessage("Saving", 1, true);
+        SOCKET.emit("clear_history", {}); // double clear history to prevent detection during saving
+
+        setTimeout(function () {
+            // just before saving message disappears, clear history
+            // so we don't have old readings
+            CURRENT_RECOGNITION_GENERATION += 1;
+            SOCKET.emit("clear_history", {});
+        }, 900);
+    }
+
+</script>

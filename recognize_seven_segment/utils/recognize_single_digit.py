@@ -1,8 +1,8 @@
 # TODO: Remove or make more general.
-from PIL import Image
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
 
 # This is how we code segments by numbers 0 to 6
 #
@@ -72,7 +72,7 @@ def recognize_single_digit(image: np.ndarray, threshold: float = 100) -> int:
 
 
 if __name__ == "__main__":
-    image_path = "/home/josef/Downloads/5.jpg"
+    image_path = "/tmp/images/"
     image = Image.open(image_path)
     image = np.array(image)
     digit = recognize_single_digit(image, 100)

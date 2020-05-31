@@ -42,10 +42,28 @@ def generate_digit_easy_gluko(digit: int, width: int = 40) -> np.ndarray:
     return imutils.resize(easy_gluko_digits[digit], width=width)
 
 
+def load_digit_freestyle_libre(digit: str) -> np.ndarray:
+    relative_path = os.path.join("..", "resources", "fonts", "FreeStyleLibreFont", str(digit) + ".png")
+    image_path = os.path.join(os.path.dirname(this_file_path), relative_path)
+
+    image = cv2.imread(image_path)
+    image = image[:, :, 0]
+    return image
+
+
+freestyle_libre_digits = {str(digit): load_digit_freestyle_libre(str(digit) + "_small")
+                          for digit in list(range(10)) +
+                          ["up", "down", "down_right", "up_right", "right"]}
+
+
+def generate_digit_freestyle_libre(digit: str, width: int = 40) -> np.ndarray:
+    return imutils.resize(freestyle_libre_digits[str(digit)], width=width)
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
-    digit = generate_digit_easy_gluko(6)
+    digit = generate_digit_freestyle_libre(8)
     print(f"Color range: {np.min(digit)} - {np.max(digit)}")
     print(f"Shape: {digit.shape}")
     plt.imshow(digit, cmap="gray")

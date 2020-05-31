@@ -42,9 +42,7 @@ def evaluate(image_dir: str, predict_function: Callable[[np.ndarray], Tuple[str,
 
 
 def main():
-    # This should contain link to Martin Cochner's video dataset https://drive.google.com/open?id=1vRyM9glACNjC0IiJrKZxF9QKdrO9XT3C
-    evaluation_images_dir = "/home/josef/Downloads/cukrovka_trainset_0_1920_and_3840/"
-    evaluation_images_dir = "/home/josef/Downloads/flash/"
+    evaluation_images_dir = "/tmp/images/"
 
     evaluation = evaluate(evaluation_images_dir, detect_digits)
     print(evaluation)

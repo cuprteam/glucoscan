@@ -2,14 +2,17 @@ from typing import List, Tuple, Optional, Dict
 
 import cv2
 import numpy as np
-import imutils
 
 from recognize_seven_segment.detectors.detect_display import detect_display_v2
+from recognize_seven_segment.utils.adaptively_match_digit import adaptively_match_digit_hypotheses
 from recognize_seven_segment.utils.generate_digit import generate_digit_easy_gluko
-from recognize_seven_segment.utils.preprocess import preprocess
-from recognize_seven_segment.utils.threshold import threshold_colored
+from recognize_seven_segment.utils.get_leading_rectangles import get_leading_rectangles
 from recognize_seven_segment.utils.input_output import load_image, list_image_paths, get_image_name, \
     create_dir_if_it_doesnt_exist
+from recognize_seven_segment.utils.leading_rectangles_to_str import leading_rectangles_to_str
+from recognize_seven_segment.utils.plot_rectangle import plot_rectangle
+from recognize_seven_segment.utils.preprocess import preprocess
+from recognize_seven_segment.utils.threshold import threshold_colored
 
 
 def detect_digit_hypotheses(digit: int, image: np.ndarray, scale_iterations: int = 10,
@@ -21,36 +24,8 @@ def detect_digit_hypotheses(digit: int, image: np.ndarray, scale_iterations: int
     image_height, image_width = image.shape
 
     template = generate_digit_easy_gluko(digit, image_width // 7)
-    template_height, template_width = template.shape
 
-    rectangles = []
-
-    for scale in np.linspace(scale_min, scale_max, scale_iterations)[::-1]:
-        resized = imutils.resize(image, width=int(image_width * scale))
-        resized_height, resized_width = resized.shape
-        scale_inv = image_width / float(resized_width)
-
-        if resized_width < template_width or resized_height < template_height:
-            break
-
-        result = cv2.matchTemplate(resized, template, cv2.TM_CCOEFF_NORMED)
-        start_coordinates = np.where(result > match_threshold)
-        values = result[start_coordinates]
-        for y, x, confidence in zip(*start_coordinates, values):
-            rectangle_coordinates = get_rectangle_coordinates(x, y, scale_inv, template_width, template_height)
-            rectangle = (rectangle_coordinates, confidence)
-            rectangles.append(rectangle)
-
-    return rectangles
-
-
-def get_rectangle_coordinates(x: int, y: int, scale_inv: int, template_width: int, template_height: int) -> List[int]:
-    x0 = (int)(x * scale_inv)
-    y0 = (int)(y * scale_inv)
-    x1 = (int)((x + template_width) * scale_inv)
-    y1 = (int)((y + template_height) * scale_inv)
-
-    return [x0, y0, x1, y1]
+    return adaptively_match_digit_hypotheses(template, image, scale_iterations, scale_min, scale_max, match_threshold)
 
 
 def detect_hypothesis(image: np.ndarray, scale_iterations: int = 10,
@@ -69,96 +44,6 @@ def detect_hypothesis(image: np.ndarray, scale_iterations: int = 10,
         rectangles.extend(digit_rectangles)
 
     return rectangles
-
-
-def plot_rectangle(image: np.ndarray, rectangle, show_match_coeff: bool = True):
-    (x0, y0, x1, y1), match_coeff, digit = rectangle
-    cv2.rectangle(image, (x0, y0), (x1, y1), (0, 0, 0), 1)
-    cv2.rectangle(image, (x0, y0), (x0 + 20, y0 + 24), (50, 50, 50), -1)
-    cv2.putText(image, str(digit), (x0 + 3, y0 + 18),
-                cv2.FONT_HERSHEY_SIMPLEX, .6, (255, 255, 255), 1)
-    if show_match_coeff:
-        cv2.rectangle(image, (x0, y1 - 24), (x1, y1), (100, 100, 100), -1)
-        cv2.putText(image, f"{match_coeff:.2f}", (x0 + 3, y1 - 8),
-                    cv2.FONT_HERSHEY_SIMPLEX, .6, (255, 255, 255), 1)
-
-
-def rectangles_could_be_adjacent_digits(rectangle_a: Tuple[List[int], float, int],
-                                        rectangle_b: Tuple[List[int], float, int],
-                                        max_allowed_size_ratio: float = 1.2,
-                                        min_allowed_horizontal_distance_multiple: float = 0.8,
-                                        max_allowed_horizontal_distance_multiple: float = 0.3,
-                                        max_allowed_vertical_distance_multiple: float = 0.2) -> bool:
-    (x0_a, y0_a, x1_a, y1_a), match_coeff_a, digit_a = rectangle_a
-    (x0_b, y0_b, x1_b, y1_b), match_coeff_b, digit_b = rectangle_b
-    width_a, width_b = x1_a - x0_a, x1_b - x0_b
-    height_a, height_b = y1_a - y0_a, y1_b - y0_b
-
-    result = width_a / width_b < max_allowed_size_ratio and \
-             width_b / width_a < max_allowed_size_ratio and \
-             height_a / height_b < max_allowed_size_ratio and \
-             height_b / height_a < max_allowed_size_ratio and \
-             abs(x0_a - x0_b) > (width_a + width_b) / 2 * min_allowed_horizontal_distance_multiple and \
-             min(abs(x1_a - x0_b), abs(x1_b - x0_a)) < (
-                     width_a + width_b) / 2 * max_allowed_horizontal_distance_multiple and \
-             abs(y0_a - y0_b) < (height_a + height_b) / 2 * max_allowed_vertical_distance_multiple
-
-    return result
-
-
-def get_leading_rectangles(rectangles: List[Tuple[List[int], float, int]]) \
-        -> List[Tuple[List[int], float, int]]:
-    best_pair_coeff = -1
-    best_pair = []
-    for rectangle_left in rectangles:
-        (x0_left, y0_left, x1_left, y1_left), match_coeff_left, digit_left = rectangle_left
-        for rectangle_right in rectangles:
-            (x0_right, y0_right, x1_right, y1_right), match_coeff_right, digit_right = rectangle_right
-
-            if rectangles_could_be_adjacent_digits(rectangle_left, rectangle_right) \
-                    and x0_left < x0_right:
-                cumulative_coeff = match_coeff_left + match_coeff_right
-                if cumulative_coeff > best_pair_coeff:
-                    best_pair_coeff = cumulative_coeff
-                    best_pair = [rectangle_left, rectangle_right]
-
-    if len(best_pair) == 0:
-        return best_pair
-
-    best_rectangle_left, best_rectangle_right = best_pair
-    (x0_left, y0_left, x1_left, y1_left), match_coeff_left, digit_left = best_rectangle_left
-    (x0_right, y0_right, x1_right, y1_right), match_coeff_right, digit_right = best_rectangle_right
-
-    best_coeff_leftmost = -1
-    best_coeff_rightmost = -1
-    best_rectangle_leftmost = []
-    best_rectangle_rightmost = []
-    for rectangle in rectangles:
-        (x0, y0, x1, y1), match_coeff, digit = rectangle
-        if x0 < x0_left and rectangles_could_be_adjacent_digits(rectangle, best_rectangle_left):
-            if match_coeff > best_coeff_leftmost:
-                best_coeff_leftmost = match_coeff
-                best_rectangle_leftmost = [rectangle]
-        if x1 > x1_right and rectangles_could_be_adjacent_digits(rectangle, best_rectangle_right):
-            if match_coeff > best_coeff_rightmost:
-                best_coeff_rightmost = match_coeff
-                best_rectangle_rightmost = [rectangle]
-
-    # TODO: here is a space for some prior. It is for example far less likely to get 2
-    # as the leftmost digit, but if it matches really well, it could happen.
-
-    use_rightmost = best_coeff_leftmost < best_coeff_rightmost
-    if use_rightmost:
-        return best_pair + best_rectangle_rightmost
-    else:
-        return best_rectangle_leftmost + best_pair
-
-
-def leading_rectangles_to_str(rectangles: List[Tuple[List[int], float, int]]) -> str:
-    rectangles.sort(key=lambda x: x[0][0])
-    digits = [str(r[-1]) for r in rectangles]
-    str_representation = "".join(digits[:-1]) + "." + digits[-1]
-    return str_representation
 
 
 def detect_digits(image: np.ndarray) -> Tuple[Optional[str], Dict]:
@@ -208,12 +93,7 @@ def detect_digits(image: np.ndarray) -> Tuple[Optional[str], Dict]:
 
 
 if __name__ == "__main__":
-    # image_dir = "/home/josef/Downloads/Gluko/"
-    # image_dir = "/home/josef/Downloads/cukrovka_trainset_0_1920_and_3840/"
-    # image_dir = "./recognize_seven_segment/resources/easy_gluko/"
-    # image_dir = "/home/josef/Downloads/OneDrive_1_11-19-2019/"
-    image_dir = "/home/josef/Downloads/flash/"
-
+    image_dir = "/tmp/images/"
     out_dir = "/tmp/annotations/"
 
     create_dir_if_it_doesnt_exist(out_dir)

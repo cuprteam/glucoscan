@@ -1,6 +1,7 @@
 # TODO: Remove - this is specific for the EasyGluko baseline
-import numpy as np
 from typing import Dict
+
+import numpy as np
 
 
 def slice_image(image: np.ndarray, width: int = 40, height: int = 70) -> Dict[str, np.ndarray]:

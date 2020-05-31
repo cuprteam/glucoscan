@@ -1,6 +1,6 @@
 ### Glucoscan Overview
 
-### How to run GlucoScan in Docker
+### How to run Glucoscan in Docker
 
  - __Prerequisity__: A linux computer with docker installed
  - Clone the recognizer: `git clone https://github.com/cuprteam/glucoscan`
@@ -10,7 +10,6 @@
 glucoscan/
 ├── lcd_digit_recognizer
 │   ├── experiments
-│   ├── __pycache__
 │   ├── recognition
 │   ├── visualization
 │   ├── web
@@ -19,7 +18,6 @@ glucoscan/
 │   ├── detectors
 │   ├── experiments
 │   ├── hackathon_api
-│   ├── __pycache__
 │   ├── resources
 │   ├── utils
 │   └── __init__.py
@@ -27,11 +25,21 @@ glucoscan/
 ├── build.sh
 ├── Dockerfile
 ├── glucoscan_entrypoint.sh
+├── LICENSE
 ├── README.md
 ├── requirements.txt
 └── run.sh
 
-13 directories, 9 files
+11 directories, 10 files
 ```
  - Run `build_and_run.sh` - script that builds docker image with glucoscan (by calling `build.sh`) and runs the docker container (by calling `run.sh`)
 
+![](glucoscan_build_and_run.gif)
+
+### DISCLAIMER
+Created (in Alphabetical order) during a Hackathon in the course of 2 days, by:
+ - Josef Ondrej, https://gitlab.com/josef.ondrej
+ - Martin Cochner, https://github.com/mcochner
+ - Miroslav Vodolan, https://github.com/m9ra
+
+See the file LICENSE for the licence conditions.

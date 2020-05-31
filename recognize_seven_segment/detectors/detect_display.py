@@ -4,10 +4,11 @@ import cv2
 import imutils
 import numpy as np
 
-from recognize_seven_segment.utils.four_point_transform import four_point_transform
+from recognize_seven_segment.utils.perspective_transformation import perspective_transformation
 from recognize_seven_segment.utils.input_output import load_image, list_image_paths, get_image_name, \
     create_dir_if_it_doesnt_exist
 from recognize_seven_segment.utils.preprocess import preprocess
+
 
 def detect_display_v2(image: np.ndarray,
                       max_edge_ratio: float = 1.5,
@@ -37,17 +38,14 @@ def detect_display_v2(image: np.ndarray,
             box = cv2.boxPoints(((x, y), (w, h), 0))
 
         box = np.int0(box)
-        lcd_display = four_point_transform(orig, box)
+        lcd_display = perspective_transformation(orig, box)
         lcd_displays.append(lcd_display)
 
     return lcd_displays
 
-if __name__ == "__main__":
-    # image_dir = "/home/josef/Downloads/Gluko/"
-    # image_dir = "/home/josef/Downloads/cukrovka_trainset_0_1920_and_3840/"
-    # image_dir = "./recognize_seven_segment/resources/easy_gluko/"
-    image_dir = "/home/josef/Downloads/OneDrive_1_11-19-2019/"
 
+if __name__ == "__main__":
+    image_dir = "/tmp/images/"
     out_dir = "/tmp/displays/"
 
     create_dir_if_it_doesnt_exist(out_dir)
